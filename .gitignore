@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.ipynb_checkpoints/
+
+# Generated experiment data
+data/*.csv
+results/figures/*.png
+results/tables/*.csv
