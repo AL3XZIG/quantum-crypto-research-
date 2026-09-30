@@ -1,11 +1,4 @@
-# Core
 numpy>=2.0
 pandas>=2.2
 matplotlib>=3.9
-
-# Classical cryptography
 cryptography>=43.0
-
-# Post-quantum cryptography
-# Подключить после выбора конкретной реализации ML-DSA.
-# Например, liboqs-python или другая проверенная реализация.

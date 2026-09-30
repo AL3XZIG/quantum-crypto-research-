@@ -4,8 +4,6 @@ __pycache__/
 venv/
 .env
 .ipynb_checkpoints/
-
-# Generated experiment data
 data/*.csv
 results/figures/*.png
 results/tables/*.csv
