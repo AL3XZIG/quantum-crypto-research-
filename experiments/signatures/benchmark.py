@@ -1,6 +1,9 @@
 """Общие структуры и утилиты бенчмарка цифровых подписей."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
+from statistics import mean, stdev
 from time import perf_counter
 from typing import Callable
 
@@ -17,8 +20,49 @@ class BenchmarkResult:
     signature_bytes: int
 
 
-def measure_ms(function: Callable[[], object], repetitions: int = 100) -> float:
-    start = perf_counter()
-    for _ in range(repetitions):
+def measure_ms(
+    function: Callable[[], object],
+    repetitions: int = 100,
+    warmup: int = 5,
+) -> float:
+    """Return the arithmetic mean execution time in milliseconds.
+
+    Warm-up calls are excluded from the measurement. The function is invoked
+    once per repetition so that every timing sample represents one operation.
+    """
+    if repetitions < 1:
+        raise ValueError("repetitions must be >= 1")
+    if warmup < 0:
+        raise ValueError("warmup must be >= 0")
+
+    for _ in range(warmup):
         function()
-    return (perf_counter() - start) * 1000 / repetitions
+
+    samples = []
+    for _ in range(repetitions):
+        start = perf_counter()
+        function()
+        samples.append((perf_counter() - start) * 1000)
+
+    return mean(samples)
+
+
+def measure_ms_with_stats(
+    function: Callable[[], object],
+    repetitions: int = 100,
+    warmup: int = 5,
+) -> tuple[float, float]:
+    """Return mean and sample standard deviation in milliseconds."""
+    if repetitions < 2:
+        raise ValueError("repetitions must be >= 2")
+
+    for _ in range(warmup):
+        function()
+
+    samples = []
+    for _ in range(repetitions):
+        start = perf_counter()
+        function()
+        samples.append((perf_counter() - start) * 1000)
+
+    return mean(samples), stdev(samples)
