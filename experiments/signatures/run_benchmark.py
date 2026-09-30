@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import csv
 from dataclasses import asdict
 from pathlib import Path
@@ -9,11 +10,30 @@ from pathlib import Path
 from experiments.signatures.ecdsa_benchmark import benchmark as benchmark_ecdsa
 from experiments.signatures.mldsa_benchmark import benchmark as benchmark_mldsa
 
-RESULT_PATH = Path("data/signature_benchmark.csv")
+ROOT = Path(__file__).resolve().parents[2]
+RESULT_PATH = ROOT / "data" / "signature_benchmark.csv"
 
 
 def main() -> None:
-    results = [benchmark_ecdsa(), benchmark_mldsa()]
+    parser = argparse.ArgumentParser(
+        description="Benchmark ECDSA P-256 against ML-DSA-65."
+    )
+    parser.add_argument(
+        "--repetitions",
+        type=int,
+        default=100,
+        help="Number of timed repetitions for each operation.",
+    )
+    args = parser.parse_args()
+
+    if args.repetitions < 2:
+        parser.error("--repetitions must be >= 2")
+
+    results = [
+        benchmark_ecdsa(repetitions=args.repetitions),
+        benchmark_mldsa(repetitions=max(30, args.repetitions // 2)),
+    ]
+
     RESULT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
     with RESULT_PATH.open("w", newline="", encoding="utf-8") as file:
