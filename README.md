@@ -21,13 +21,41 @@
 - `results/tables/` — подготовленные таблицы.
 - `tests/` — автоматические проверки.
 
-## Первый запуск
+## Установка
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Для ML-DSA используется `liboqs-python`, официальный Python-wrapper проекта Open Quantum Safe. Он может автоматически собрать совместимую версию `liboqs`, если системная библиотека отсутствует.
+
+## Запуск экспериментов
+
+Модель Гровера:
 
 ```bash
 python -m experiments.grover.grover_model
 ```
 
-Результат сохраняется в `data/grover_results.csv`.
+Сравнение ECDSA P-256 и ML-DSA-65:
+
+```bash
+python -m experiments.signatures.run_benchmark
+```
+
+Результат сохраняется в:
+
+`data/signature_benchmark.csv`
+
+Для каждой схемы фиксируются:
+- время генерации ключей;
+- время подписи;
+- время проверки;
+- размер открытого ключа;
+- размер закрытого ключа;
+- размер подписи.
 
 ## Принцип исследования
 
